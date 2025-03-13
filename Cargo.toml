@@ -1,0 +1,24 @@
+[package]
+name = "who-are-pals"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+solana-tpu-client-next = { version = "~2.1.1", default-features = false }
+solana-client = { version = "~2.1.1" }
+solana-transaction-status = { version = "~2.1.1", default-features = false }
+solana-sdk = { version = "~2.1.1", default-features = false }
+solana-rpc-client-api = { version = "~2.1.1" }
+solana-connection-cache = { version = "~2.1.1", default-features = false }
+solana-streamer = { version = "~2.1.1" }
+
+rustls = { version = "0.23.15", default-features = false }
+quinn = { version = "0.11.6", default-features = false }
+
+jsonrpsee = { version = "=0.24.5", features = ["server", "http-client", "macros"] }
+tokio = "1.40.0"
+anyhow = "1.0.91"
+figment = { version = "0.10.19", features = ["env"] }
+serde = { version = "1.0.219", features = ["derive"] }
+dotenvy = "0.15.7"
+thiserror = "1.0.69"
