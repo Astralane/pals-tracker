@@ -17,7 +17,7 @@ cargo build --release
 
 ## Endpoints
 
-### 🛡️ `GET /paladin/palidators`
+### 🛡️ `GET /api/palidators`
 **Fetch all palidator public keys for current epoch**  
 
 ```json
@@ -28,7 +28,7 @@ cargo build --release
 ]
 ```
 
-### ⚔️ `GET /paladin/next_palidator`
+### ⚔️ `GET /api/next_palidator`
 **Get next leader palidator**
 ```json
 {
@@ -37,7 +37,7 @@ cargo build --release
 }
 ```
 
-### ⚔️ `GET /paladin/next_palidator/{slot}`
+### ⚔️ `GET /api/next_palidator/{slot}`
 **Get next leader palidator on or after given slot**
 ```json
 {
