@@ -1,10 +1,13 @@
 #![feature(duration_constructors)]
 
+mod app;
 mod constants;
 mod palidator_cache;
 mod palidator_tracker;
+mod server;
 mod vendor;
 
+use crate::palidator_tracker::PalidatorTracker;
 use crate::vendor::quic_client_certificate::QuicClientCertificate;
 use crate::vendor::quic_networking::{create_client_config, create_client_endpoint};
 use figment::Figment;
@@ -18,14 +21,14 @@ use std::net::SocketAddr;
 use std::sync::Arc;
 use tokio_util::sync::CancellationToken;
 use tracing::info;
-use crate::palidator_tracker::PalidatorTracker;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Config {
     rpc_url: String,
     ws_url: String,
     keypair_file: Option<String>,
-    bind: SocketAddr,
+    quic_bind: SocketAddr,
+    address: SocketAddr,
 }
 #[tokio::main]
 async fn main() {
@@ -43,16 +46,23 @@ async fn main() {
         Keypair::new()
     };
 
-    let palidator_tracker = PalidatorTracker::new(
+    let tracker = PalidatorTracker::new(
         rpc.clone(),
         config.ws_url,
         keypair,
-        config.bind,
+        config.quic_bind,
         cancel.clone(),
     )
-        .await
-        .unwrap();
+    .await
+    .unwrap();
 
-    info!("known palidators: {:?}", palidator_tracker.get_all_palidator_keys());
-    palidator_tracker.join().await;
+    let hdl = server::serve(
+        config.address,
+        tracker.palidator_cache.clone(),
+        tracker.slot.clone(),
+    )
+    .await
+    .unwrap();
+
+    tracker.join().await;
 }

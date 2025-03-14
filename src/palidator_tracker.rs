@@ -12,11 +12,11 @@ use std::net::SocketAddr;
 use std::sync::atomic::AtomicU64;
 use std::sync::{Arc, RwLock};
 use tokio_util::sync::CancellationToken;
-use tracing::error;
+use tracing::{error, info};
 
 pub struct PalidatorTracker {
-    palidator_cache: Arc<RwLock<PalidatorCache>>,
-    slot: Arc<AtomicU64>,
+    pub palidator_cache: Arc<RwLock<PalidatorCache>>,
+    pub slot: Arc<AtomicU64>,
     hdl: tokio::task::JoinHandle<()>,
 }
 
@@ -119,7 +119,7 @@ impl PalidatorTracker {
             else {
                 continue;
             };
-
+            info!("subscribed to slot updates");
             while let Some(slot_update) = stream.next().await {
                 let slot = match slot_update {
                     SlotUpdate::FirstShredReceived { slot, .. } => slot,
@@ -131,21 +131,5 @@ impl PalidatorTracker {
             //something bad happened try reconnecting now
             unsub().await;
         }
-    }
-
-    pub fn get_all_palidator_keys(&self) -> Vec<String> {
-        let pal_cache = self.palidator_cache.read().unwrap();
-        pal_cache
-            .palidators
-            .iter()
-            .map(|item| item.pubkey.to_string())
-            .collect()
-    }
-
-    pub fn get_next_palidator_with_slot(&self, curr_slot: Slot) -> Option<(Slot, String)> {
-        let cache = self.palidator_cache.read().unwrap();
-        let queue = &cache.slot_schedule;
-        let (slot, pk) = queue.range(curr_slot..).next()?;
-        Some((*slot as Slot, pk.clone()))
     }
 }

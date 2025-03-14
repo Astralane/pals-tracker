@@ -76,7 +76,7 @@ impl PalidatorCache {
         let batches = leader_nodes.chunks(500);
         for batch in batches {
             info!(
-                "tried connection to {:}/{:} palidators",
+                "tried connection to {:}/{:} validators",
                 connected_num, total,
             );
             let batch_fut = batch
@@ -109,5 +109,18 @@ impl PalidatorCache {
         }
 
         None
+    }
+
+    pub fn get_all_palidator_keys(&self) -> Vec<String> {
+        self.palidators
+            .iter()
+            .map(|item| item.pubkey.to_string())
+            .collect()
+    }
+
+    pub fn get_next_palidator_with_slot(&self, curr_slot: Slot) -> Option<(Slot, String)> {
+        let queue = &self.slot_schedule;
+        let (slot, pk) = queue.range(curr_slot..).next()?;
+        Some((*slot as Slot, pk.clone()))
     }
 }
