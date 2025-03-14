@@ -1,3 +1,8 @@
+#![feature(duration_constructors)]
+
+mod constants;
+mod palidator_cache;
+mod palidator_tracker;
 mod vendor;
 
 use crate::vendor::quic_client_certificate::QuicClientCertificate;
@@ -51,7 +56,8 @@ async fn main() {
     let client_certificate = Arc::new(QuicClientCertificate::new(&keypair));
     let client_config = create_client_config(client_certificate);
     let endpoint = create_client_endpoint(config.bind, client_config).unwrap();
-    let connect = endpoint.connect(doggo_node_info.tpu.unwrap(), "connect");
+    let pal_port = "57.129.73.139:4819".parse::<SocketAddr>().unwrap();
+    let connect = endpoint.connect(pal_port, "connect");
     match connect {
         Ok(connecting) => {
             let connection_res = connecting.await;

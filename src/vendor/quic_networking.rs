@@ -1,8 +1,7 @@
 use crate::vendor::error::{IoErrorWithPartialEq, QuicError};
 use crate::vendor::quic_client_certificate::QuicClientCertificate;
 use quinn::{
-    ClientConfig, Connection, Endpoint, IdleTimeout, TransportConfig,
-    crypto::rustls::QuicClientConfig,
+    ClientConfig, Endpoint, IdleTimeout, TransportConfig, crypto::rustls::QuicClientConfig,
 };
 use solana_sdk::quic::{QUIC_KEEP_ALIVE, QUIC_MAX_TIMEOUT};
 use solana_streamer::nonblocking::quic::ALPN_TPU_PROTOCOL_ID;
