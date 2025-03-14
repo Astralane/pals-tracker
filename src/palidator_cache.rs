@@ -7,7 +7,6 @@ use solana_sdk::commitment_config::CommitmentConfig;
 use std::collections::{BTreeMap, HashMap};
 use std::net::SocketAddr;
 use std::ops::Add;
-use std::sync::Arc;
 use tracing::info;
 
 // contains all paladin

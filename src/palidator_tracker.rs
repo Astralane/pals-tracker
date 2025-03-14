@@ -5,7 +5,6 @@ use futures::StreamExt;
 use quinn::Endpoint;
 use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_rpc_client_api::response::SlotUpdate;
-use solana_sdk::clock::Slot;
 use solana_sdk::commitment_config::CommitmentConfig;
 use solana_sdk::signature::Keypair;
 use std::net::SocketAddr;

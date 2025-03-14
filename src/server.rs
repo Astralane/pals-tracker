@@ -1,7 +1,7 @@
 use crate::app::{AppState, app_router};
 use crate::palidator_cache::PalidatorCache;
 use anyhow::Context;
-use axum::{Extension, Router};
+use axum::Extension;
 use std::net::SocketAddr;
 use std::sync::atomic::AtomicU64;
 use std::sync::{Arc, RwLock};
@@ -18,7 +18,7 @@ pub async fn serve(
         .await
         .context(format!("Failed to bind to address {:?}", address))?;
     info!("Listening on {:?}", address);
-    let hdl = axum::serve(listener, app.into_make_service())
+    let _hdl = axum::serve(listener, app.into_make_service())
         .await
         .context("Failed to start server")?;
     Ok(())

@@ -8,15 +8,11 @@ mod server;
 mod vendor;
 
 use crate::palidator_tracker::PalidatorTracker;
-use crate::vendor::quic_client_certificate::QuicClientCertificate;
-use crate::vendor::quic_networking::{create_client_config, create_client_endpoint};
 use figment::Figment;
 use figment::providers::Env;
 use serde::{Deserialize, Serialize};
 use solana_client::nonblocking::rpc_client::RpcClient;
-use solana_sdk::pubkey;
 use solana_sdk::signature::{EncodableKey, Keypair};
-use std::collections::{HashMap, HashSet};
 use std::net::SocketAddr;
 use std::sync::Arc;
 use tokio_util::sync::CancellationToken;
