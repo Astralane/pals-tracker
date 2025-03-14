@@ -1,6 +1,6 @@
 # Paladin Validator Tracker 🛡️⚔️
 
-A tiny server that helps you retrieve all palidators and upcoming leader slots.
+A tiny server that helps you retrieve all palidators and their upcoming leader slots.
 
 ## Getting Started 🏁
 
