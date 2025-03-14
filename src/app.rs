@@ -24,7 +24,8 @@ impl AppState {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct NextPalidator {
     pub pubkey: String,
-    pub slot: u64,
+    pub leader_slot: u64,
+    pub context_slot: u64,
 }
 
 pub fn app_router() -> axum::Router {
@@ -49,12 +50,16 @@ pub async fn get_next_validator(
     ctx: axum::Extension<Arc<AppState>>,
 ) -> Result<Json<NextPalidator>, &'static str> {
     info!("call get next validator");
-    let current_slot = ctx.slot_cache.load(std::sync::atomic::Ordering::SeqCst);
+    let context_slot = ctx.slot_cache.load(std::sync::atomic::Ordering::SeqCst);
     let pal_cache = ctx.palidator_cache.read().unwrap();
-    let (slot, pubkey) = pal_cache
-        .get_next_palidator_with_slot(current_slot)
+    let (leader_slot, pubkey) = pal_cache
+        .get_next_palidator_with_slot(context_slot)
         .ok_or("slot not found")?;
-    Ok(Json(NextPalidator { pubkey, slot }))
+    Ok(Json(NextPalidator {
+        pubkey,
+        leader_slot,
+        context_slot,
+    }))
 }
 
 #[axum::debug_handler]
@@ -64,8 +69,12 @@ pub async fn get_next_with_slot(
 ) -> Result<Json<NextPalidator>, &'static str> {
     info!("call get next validator with slot");
     let pal_cache = ctx.palidator_cache.read().unwrap();
-    let (slot, pubkey) = pal_cache
+    let (leader_slot, pubkey) = pal_cache
         .get_next_palidator_with_slot(slot)
         .ok_or("slot not found")?;
-    Ok(Json(NextPalidator { pubkey, slot }))
+    Ok(Json(NextPalidator {
+        pubkey,
+        leader_slot,
+        context_slot: slot,
+    }))
 }

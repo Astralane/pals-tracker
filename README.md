@@ -33,7 +33,8 @@ cargo build --release
 ```json
 {
   "pubkey": "Csd...def",
-  "slot": 42424242
+  "leader_slot": 42424242,
+  "context_slot": 42424242
 }
 ```
 
@@ -42,7 +43,8 @@ cargo build --release
 ```json
 {
   "pubkey": "Csd...def",
-  "slot": 42424242
+  "leader_slot": 42424242,
+  "context_slot": 42424242
 }
 ```
 
