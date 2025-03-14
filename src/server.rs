@@ -1,4 +1,4 @@
-use crate::app::{app_router, AppState};
+use crate::app::{AppState, app_router};
 use crate::palidator_cache::PalidatorCache;
 use anyhow::Context;
 use axum::{Extension, Router};

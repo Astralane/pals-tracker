@@ -1,10 +1,10 @@
 use crate::palidator_cache::PalidatorCache;
+use axum::extract::Path;
 use axum::routing::get;
 use axum::{Json, Router};
 use serde::{Deserialize, Serialize};
 use std::sync::atomic::AtomicU64;
 use std::sync::{Arc, RwLock};
-use axum::extract::Path;
 use tracing::info;
 
 pub struct AppState {
@@ -29,9 +29,9 @@ pub struct NextPalidator {
 
 pub fn app_router() -> axum::Router {
     Router::new()
-        .route("/paladin/palidators", get(get_all_validators))
-        .route("/paladin/next_palidator", get(get_next_validator))
-        .route("/paladin/next_palidator/{slot}", get(get_next_with_slot))
+        .route("/api/palidators", get(get_all_validators))
+        .route("/api/next_palidator", get(get_next_validator))
+        .route("/api/next_palidator/{slot}", get(get_next_with_slot))
 }
 
 #[axum::debug_handler]
