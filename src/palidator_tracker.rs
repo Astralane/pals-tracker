@@ -52,7 +52,7 @@ impl PalidatorTracker {
         })
     }
 
-    async fn join(self) {
+    pub async fn join(self) {
         self.hdl.await.unwrap();
     }
 
