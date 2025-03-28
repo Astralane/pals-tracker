@@ -86,7 +86,7 @@ impl PalidatorTracker {
 
             if epoch_info.epoch == cache.read().unwrap().epoch {
                 // check every minute for epoch changes
-                tokio::time::sleep(std::time::Duration::from_mins(1)).await;
+                tokio::time::sleep(std::time::Duration::from_secs(60 *60)).await;
                 continue;
             }
 

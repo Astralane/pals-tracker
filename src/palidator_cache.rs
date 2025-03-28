@@ -45,7 +45,7 @@ impl PalidatorCache {
 
         for (key, value) in palidator_schedule.iter_mut() {
             for slot in value {
-                *slot.saturating_add(epoch_start_slot as usize);
+                *slot = slot.saturating_add(epoch_start_slot as usize);
                 slot_schedule.insert(*slot as u64, key.clone());
             }
         }
