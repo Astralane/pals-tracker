@@ -21,11 +21,15 @@ cargo build --release
 **Fetch all palidator public keys for current epoch**  
 
 ```json
-[
-    "Ss...Z77",
-    "ACv...mi",
-    "7Z...Z84",
-]
+{
+  "fish..adsf": [
+    329623876,
+    329623874
+  ],
+  "frs....dfad": [
+    329623874
+  ]
+}
 ```
 
 ### ⚔️ `GET /api/next_palidator`
