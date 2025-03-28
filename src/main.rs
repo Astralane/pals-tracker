@@ -1,5 +1,3 @@
-#![feature(duration_constructors)]
-
 mod app;
 mod constants;
 mod palidator_cache;

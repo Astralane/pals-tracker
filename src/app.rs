@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::palidator_cache::PalidatorCache;
 use axum::extract::Path;
 use axum::routing::get;
@@ -38,10 +39,10 @@ pub fn app_router() -> axum::Router {
 #[axum::debug_handler]
 pub async fn get_all_validators(
     ctx: axum::Extension<Arc<AppState>>,
-) -> Result<Json<Vec<String>>, &'static str> {
+) -> Result<Json<HashMap<String, Vec<usize>>>, &'static str> {
     info!("call get all validators");
     let pal_cache = ctx.palidator_cache.read().unwrap();
-    let palidators = pal_cache.get_all_palidator_keys();
+    let palidators = pal_cache.palidator_schedule.clone();
     Ok(Json(palidators))
 }
 
