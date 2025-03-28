@@ -36,16 +36,17 @@ impl PalidatorCache {
             .cloned()
             .collect::<Vec<_>>();
 
-        let palidator_schedule = leader_schedule
+        let mut palidator_schedule = leader_schedule
             .into_iter()
             .filter(|(leader_pk, slots)| palidators_keys.contains(leader_pk))
             .collect::<HashMap<_, _>>();
 
         let mut slot_schedule = BTreeMap::new();
 
-        for (key, value) in palidator_schedule.iter() {
+        for (key, value) in palidator_schedule.iter_mut() {
             for slot in value {
-                slot_schedule.insert(epoch_start_slot + *slot as Slot, key.clone());
+                *slot.saturating_add(epoch_start_slot as usize);
+                slot_schedule.insert(*slot as u64, key.clone());
             }
         }
 
