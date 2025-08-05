@@ -1,9 +1,9 @@
-use std::collections::HashMap;
 use crate::palidator_cache::PalidatorCache;
 use axum::extract::Path;
 use axum::routing::get;
 use axum::{Json, Router};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::sync::atomic::AtomicU64;
 use std::sync::{Arc, RwLock};
 use tracing::info;
