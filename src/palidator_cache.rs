@@ -95,8 +95,8 @@ impl PalidatorCache {
         node: &RpcContactInfo,
     ) -> Option<String> {
         let key = node.pubkey.clone();
-        let to_1 = node.tpu_quic.map(|s| SocketAddr::new(s.ip(), PAL_PORT_1))?;
-        let to_2 = node.tpu_quic.map(|s| SocketAddr::new(s.ip(), PAL_PORT_2))?;
+        let to_1 = node.gossip.map(|s| SocketAddr::new(s.ip(), PAL_PORT_1))?;
+        let to_2 = node.gossip.map(|s| SocketAddr::new(s.ip(), PAL_PORT_2))?;
         if let Ok(connecting) = endpoint.connect(to_1, "connect") {
             if connecting.await.is_ok() {
                 return Some(key);
