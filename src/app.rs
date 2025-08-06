@@ -34,6 +34,7 @@ pub fn app_router() -> axum::Router {
         .route("/api/palidators", get(get_all_validators))
         .route("/api/next_palidator", get(get_next_validator))
         .route("/api/next_palidator/{slot}", get(get_next_with_slot))
+        .route("/api/palidators/ip", get(get_all_validators_with_ip))
 }
 
 #[axum::debug_handler]
@@ -78,4 +79,14 @@ pub async fn get_next_with_slot(
         leader_slot,
         context_slot: slot,
     }))
+}
+
+#[axum::debug_handler]
+pub async fn get_all_validators_with_ip(
+    ctx: axum::Extension<Arc<AppState>>,
+) -> Result<Json<HashMap<String, String>>, &'static str> {
+    info!("call get all validators");
+    let pal_cache = ctx.palidator_cache.read().unwrap();
+    let palidators = pal_cache.palidator_socket.clone();
+    Ok(Json(palidators))
 }
