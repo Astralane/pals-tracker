@@ -94,20 +94,16 @@ impl PalidatorCache {
         endpoint: &Endpoint,
         node: &RpcContactInfo,
     ) -> Option<String> {
-        let key = node.pubkey.clone();
-        let mut sockets = Vec::new();
-        sockets.push(node.gossip.map(|s| SocketAddr::new(s.ip(), PAL_PORT_1)));
-        sockets.push(node.gossip.map(|s| SocketAddr::new(s.ip(), PAL_PORT_2)));
-        sockets.push(node.tpu_quic.map(|s| SocketAddr::new(s.ip(), PAL_PORT_1)));
-        sockets.push(node.tpu_quic.map(|s| SocketAddr::new(s.ip(), PAL_PORT_2)));
-
-        for sock_option in &sockets {
-            if sock_option.is_none() {
-                continue;
-            }
-            if let Ok(connecting) = endpoint.connect(sock_option.unwrap(), "connect") {
-                if connecting.await.is_ok() {
-                    return Some(key);
+        let key = node.pubkey.to_string();
+        for sock_addrs in [node.gossip, node.tpu_quic] {
+            for port in [PAL_PORT_1, PAL_PORT_2] {
+                if let Some(addr) = sock_addrs {
+                    let address = SocketAddr::new(addr.ip(), port);
+                    if let Ok(connecting) = endpoint.connect(address, "connect") {
+                        if connecting.await.is_ok() {
+                            return Some(key);
+                        }
+                    }
                 }
             }
         }
