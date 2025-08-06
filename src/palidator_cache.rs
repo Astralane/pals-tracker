@@ -10,11 +10,17 @@ use std::ops::Add;
 use tracing::info;
 
 // contains all paladin
+
+pub struct PalidatorSocket{
+    key : String,
+    ip : String,
+}
 pub struct PalidatorCache {
     pub epoch: u64,
     pub epoch_start_slot: Slot,
     pub palidators: Vec<RpcContactInfo>,
     pub palidator_schedule: HashMap<String, Vec<usize>>,
+    pub palidator_socket: HashMap<String, String>,
     pub slot_schedule: BTreeMap<Slot, String>,
 }
 
@@ -29,7 +35,12 @@ impl PalidatorCache {
         let leader_keys = leader_schedule.keys().cloned().collect::<Vec<_>>();
         let cluster_nodes = rpc.get_cluster_nodes().await?;
 
-        let palidators_keys = Self::find_palidators(&endpoint, &leader_keys, &cluster_nodes).await;
+        let palidators_info  = Self::find_palidators(&endpoint, &leader_keys, &cluster_nodes).await;
+        let palidators_keys = palidators_info.
+            iter()
+            .map(|palidator_socket|
+                palidator_socket.key.clone())
+            .collect::<Vec<_>>();
         let palidators = cluster_nodes
             .iter()
             .filter(|item| palidators_keys.contains(&item.pubkey))
@@ -40,6 +51,11 @@ impl PalidatorCache {
             .into_iter()
             .filter(|(leader_pk, slots)| palidators_keys.contains(leader_pk))
             .collect::<HashMap<_, _>>();
+
+        let mut palidator_socket = palidators_info
+            .into_iter()
+            .map(|value|(value.key, value.ip))
+            .collect::<HashMap<String, String>>();
 
         let mut slot_schedule = BTreeMap::new();
 
@@ -54,6 +70,7 @@ impl PalidatorCache {
             epoch: epoch_info.epoch,
             epoch_start_slot,
             palidator_schedule,
+            palidator_socket,
             palidators,
             slot_schedule,
         })
@@ -63,7 +80,7 @@ impl PalidatorCache {
         my_endpoint: &Endpoint,
         leader_keys: &[String],
         cluster_nodes: &[RpcContactInfo],
-    ) -> Vec<String> {
+    ) -> Vec<PalidatorSocket> {
         // creates batches of 500 keys,
         let leader_nodes = cluster_nodes
             .iter()
@@ -87,13 +104,14 @@ impl PalidatorCache {
             connected_num = connected_num.add(batch.len());
             results.extend(result);
         }
+
         results.into_iter().flatten().collect()
     }
 
     pub async fn try_connect_to_palidator(
         endpoint: &Endpoint,
         node: &RpcContactInfo,
-    ) -> Option<String> {
+    ) -> Option<PalidatorSocket> {
         let key = node.pubkey.to_string();
         for sock_addrs in [node.gossip, node.tpu_quic] {
             for port in [PAL_PORT_1, PAL_PORT_2] {
@@ -101,7 +119,10 @@ impl PalidatorCache {
                     let address = SocketAddr::new(addr.ip(), port);
                     if let Ok(connecting) = endpoint.connect(address, "connect") {
                         if connecting.await.is_ok() {
-                            return Some(key);
+                            return Some(PalidatorSocket {
+                                key,
+                                ip : address.to_string(),
+                            });
                         }
                     }
                 }
