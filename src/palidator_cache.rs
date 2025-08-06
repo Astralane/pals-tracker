@@ -121,7 +121,7 @@ impl PalidatorCache {
                         if connecting.await.is_ok() {
                             return Some(PalidatorSocket {
                                 key,
-                                ip : address.to_string(),
+                                ip : addr.ip().to_string(),
                             });
                         }
                     }
